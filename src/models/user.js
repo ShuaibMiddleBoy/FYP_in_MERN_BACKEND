@@ -56,39 +56,43 @@ const userSchema = new mongoose.Schema(
     profileImage: {
       type: String,
       default: "",
-    },
-    tokens : [{
-      token : {
-        type: String,
-      required: true,
-      }}
-    ]
+    }
+    // tokens: [
+    //   {
+    //     token: {
+    //       type: String,
+    //       required: true,
+    //     },
+    //   },
+    // ],
   },
   { timestamps: true }
 );
 
-
-
-// generating token 
-userSchema.methods.generateToken  =  async function(){
+// generating token
+userSchema.methods.generateToken = async function () {
   try {
-    const token = await jwt.sign({_id:this._id}, process.env.JWT_SECRET_KEY, {expiresIn : "4h"}
-      );
-    this.tokens = this.tokens.concat({token:token})
+    const token = await jwt.sign(
+      { _id: this._id },
+      process.env.JWT_SECRET_KEY,
+      { expiresIn: "1h" }
+    );
+    this.tokens = this.tokens.concat({ token: token });
     return token;
   } catch (error) {
-    res.send("the error part:" + error)
+    res.send("the error part:" + error);
     console.log("the error part:" + error);
   }
-}
+};
 
-
-// hash password 
-userSchema.pre("save", async function(next){
-  this.password = await bcrypt.hash(this.password, 10);
-  this.confirmPassword = await bcrypt.hash(this.confirmPassword, 10);
-  next();
-})
+// hash password
+// userSchema.pre("save", async function (next) {
+//   if (this.isModified("password")) {
+//     this.password = await bcrypt.hash(this.password, 10);
+//     this.confirmPassword = await bcrypt.hash(this.confirmPassword, 10);
+//   }
+//   next();
+// });
 const userModel = new mongoose.model("users", userSchema);
 
 module.exports = userModel;
