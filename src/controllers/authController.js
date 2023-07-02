@@ -4,17 +4,17 @@ const bcrypt = require("bcrypt");
 const register =  async (req, res) => {
 try {
 
-    const isExisting = await User.findOne({email:req.body.email})
-    if(isExisting){
+    const user = await User.findOne(req.body)
+    if(user){
         throw new Error("Already such an email registered");
     }
+
     const newUser =  new User(req.body);
 
-    // generating token 
-    const token = await newUser.generateAuthToken();
-
-    // we hash the password here
-    const registeredUser = await newUser.save();
+    let registeredUser = await newUser.save();
+    registeredUser = registeredUser.toObject();
+    delete registeredUser.password;
+    delete registeredUser.cPassword;
     res.status(201).json(registeredUser);
 } catch (error) {
     return res.status(500).json(error.message);
@@ -23,16 +23,16 @@ try {
 
 const login = async (req, res) => {
     try {
-        const checkUser = await User.findOne({email:req.body.email});
-        if(!checkUser){
-            throw new Error("Wrong credentials");
+        const user = await User.findOne(req.body).select("-password -cPassword");
+        if(req.body.password && req.body.email){
+        if(user){
+        return res.status(201).json(user);
+        }else{
+            throw new Error("Wrong Credentials")
         }
-        const comparePassword = await bcrypt.compare(req.body.password, checkUser.password);
-        if(!comparePassword){
-            throw new Error("Wrong credentials");
-        }
-        const token = await checkUser.generateAuthToken();
-        return res.status(201).json(token);
+    }else{
+        throw new Error("Wrong Credentials")
+    }
     } catch (error) {
         return res.status(500).json(error.message);
     }

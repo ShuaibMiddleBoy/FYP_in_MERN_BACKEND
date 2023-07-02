@@ -23,40 +23,40 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    tokens: [
-      {
-        token: {
-          type: String,
-          required: true,
-        },
-      },
-    ],
+    // tokens: [
+    //   {
+    //     token: {
+    //       type: String,
+    //       required: true,
+    //     },
+    //   },
+    // ],
   },
   { timestamps: true }
 );
 
 // generating token
-userSchema.methods.generateAuthToken = async function () {
-  try {
-    const token = jwt.sign(
-      { _id: this._id },
-      process.env.SECRET_KEY,
-      {expiresIn : "24h"}
-    );
-    this.tokens = this.tokens.concat({token})
-    return token;
-  } catch (error) {
-    res.status(500).json(error);
-  }
-};
+// userSchema.methods.generateAuthToken = async function () {
+//   try {
+//     const token = jwt.sign(
+//       { _id: this._id },
+//       process.env.SECRET_KEY,
+//       {expiresIn : "24h"}
+//     );
+//     this.tokens = this.tokens.concat({token})
+//     return token;
+//   } catch (error) {
+//     res.status(500).json(error);
+//   }
+// };
 
 // hashing password
-userSchema.pre("save", async function (next) {
-  if (this.isModified("password")) {
-    this.password = await bcrypt.hash(this.password, 4);
-    this.cPassword = undefined;
-  }
-  next();
-});
+// userSchema.pre("save", async function (next) {
+//   if (this.isModified("password")) {
+//     this.password = await bcrypt.hash(this.password, 4);
+//     this.cPassword = undefined;
+//   }
+//   next();
+// });
 
 module.exports = mongoose.model("users", userSchema);
