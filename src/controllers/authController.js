@@ -1,6 +1,8 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
+const Jwt = require("jsonwebtoken");
 
+const SECRET_KEY = process.env.SECRET_KEY;
 const register =  async (req, res) => {
 try {
 
@@ -15,7 +17,15 @@ try {
     registeredUser = registeredUser.toObject();
     delete registeredUser.password;
     delete registeredUser.cPassword;
-    res.status(201).json(registeredUser);
+    if(registeredUser){
+        Jwt.sign({registeredUser}, SECRET_KEY, {expiresIn:"2h"}, (err, token)=>{
+            if(err){
+                throw new Error("Something went wrong, please try after some time")
+            }
+            return res.status(201).json({user:registeredUser, auth:token});
+        })
+    
+    }
 } catch (error) {
     return res.status(500).json(error.message);
 }
@@ -26,7 +36,13 @@ const login = async (req, res) => {
         const user = await User.findOne(req.body).select("-password -cPassword");
         if(req.body.password && req.body.email){
         if(user){
-        return res.status(201).json(user);
+            Jwt.sign({user}, SECRET_KEY, {expiresIn:"2h"}, (err, token)=>{
+                if(err){
+                    throw new Error("Something went wrong, please try after some time")
+                }
+                return res.status(201).json({user, auth:token});
+            })
+        
         }else{
             throw new Error("Wrong Credentials")
         }
