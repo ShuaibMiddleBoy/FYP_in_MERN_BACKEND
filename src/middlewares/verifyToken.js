@@ -5,7 +5,6 @@ const SECRET_KEY = process.env.SECRET_KEY;
 
 
 const verifyToken = (req,res,next) => {
-    console.log("Middleware Called");
     let token = req.headers['authorization'];
     if(token){
    token = token.split(" ")[1];
@@ -13,14 +12,13 @@ const verifyToken = (req,res,next) => {
         if(err){
             res.send({"result":"Please provide valid token"})
         }else{
+            console.log(valid);
             next();
         }
    })
     }else{
 res.send({"result":"Please add token with header"})
     }
-    console.log(token);
-    // next();
 }
 
 module.exports = verifyToken;
