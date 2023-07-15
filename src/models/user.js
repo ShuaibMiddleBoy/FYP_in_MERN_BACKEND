@@ -10,45 +10,25 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
+      unique : true
     },
     password: {
       type: String,
       required: true,
+      min : 6
     },
     cPassword: {
       type: String,
       required: true,
+      min : 6
     },
     profileImage: {
       type: String,
       default: "",
-    },
-    // tokens: [
-    //   {
-    //     token: {
-    //       type: String,
-    //       required: true,
-    //     },
-    //   },
-    // ],
+    }
   },
   { timestamps: true }
 );
-
-// generating token
-// userSchema.methods.generateAuthToken = async function () {
-//   try {
-//     const token = jwt.sign(
-//       { _id: this._id },
-//       process.env.SECRET_KEY,
-//       {expiresIn : "24h"}
-//     );
-//     this.tokens = this.tokens.concat({token})
-//     return token;
-//   } catch (error) {
-//     res.status(500).json(error);
-//   }
-// };
 
 // hashing password
 // userSchema.pre("save", async function (next) {

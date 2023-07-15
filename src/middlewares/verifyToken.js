@@ -6,13 +6,14 @@ const SECRET_KEY = process.env.SECRET_KEY;
 
 const verifyToken = (req,res,next) => {
     let token = req.headers['authorization'];
-    if(token){
+    if(!token) return res.status(403).json({msg:"Not authorized, No Token"})
+    if(token && token.startsWith("Bearer ")){
    token = token.split(" ")[1];
-   Jwt.verify(token, SECRET_KEY, (err,valid)=>{
+   Jwt.verify(token, SECRET_KEY, (err,data)=>{
         if(err){
             res.send({"result":"Please provide valid token"})
         }else{
-            console.log(valid);
+          req.user = data;
             next();
         }
    })

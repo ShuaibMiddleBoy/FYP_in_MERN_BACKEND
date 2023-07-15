@@ -2,20 +2,23 @@ const dotenv = require("dotenv").config();
 require("./mongoDB/mongoDB")
 const express = require("express");
 const app = express();
-const userRouter = require("./routers/user");
-const propertyRouter = require("./routers/property");
+const authRouter = require("./routers/authRoute");
+const propertyRouter = require("./routers/propertyRoute");
+const uploadController = require("./controllers/uploadController");
 const cors = require("cors");
 const path = require("path");
 const verifyToken = require("./middlewares/verifyToken");
+
 
 
 const filePath = path.join(__dirname, "../public/images");
 
 app.use(cors());
 app.use(express.json());
-app.use( "/auth",userRouter);
-app.use(propertyRouter);
-
+app.use(express.urlencoded({extended:true}));
+app.use("/auth",authRouter);
+app.use("/property",propertyRouter);
+app.use("/upload", uploadController);
 app.use("/images", express.static(filePath))
 
 
