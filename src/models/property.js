@@ -9,21 +9,27 @@ const propertySchema = new mongoose.Schema({
   title: {
     type : String,
     required: true,
-    min : 8
+    uppercase : true,
+    trim : true
   },
   type: {
     type : String,
     required : true,
-    enum : ["home", "house"]
+    enum : ["HOME", "HOUSE"],
+    uppercase : true ,
+    trim : true
   },
   desc: {
     type : String,
     required : true,
-    min : 20
+    lowercase : true,
+    trim : true 
   },
   price: {
     type : String,
-    required : true
+    required : true,
+    uppercase : true,
+    trim : true 
   },
   image: {
     type : String,
@@ -33,14 +39,21 @@ const propertySchema = new mongoose.Schema({
   area : {
     type : String,
     required : true,
+    uppercase : true,
+    trim : true
   },
   beds : {
-    type : String,
-    min : 1,
+    type : Number,
+    validate(value){
+      if(value<0){
+        throw new Error("Number should not be negative");
+      }
+    }
   },
   city : {
     type : String,
     required : true,
+    lowercase : true
   },
   featured : {
     type : Boolean,
