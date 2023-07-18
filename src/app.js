@@ -9,8 +9,6 @@ const contactRouter = require("./routers/contactRouter");
 const subsRouter = require("./routers/subsRouter");
 const cors = require("cors");
 const path = require("path");
-const verifyToken = require("./middlewares/verifyToken");
-
 
 
 const filePath = path.join(__dirname, "../public/images");
